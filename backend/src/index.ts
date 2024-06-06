@@ -1,5 +1,14 @@
 import express from 'express';
+import userRouter from './routers/user'
+import workerRouter from './routers/worker'
+
 const app = express();
 
-// connection string = postgresql://postgres:mysecretpassword@localhost:5433/postgres
+export const JWT_SECRET = "ankit20";
+
+app.use("/v1/user", userRouter);
+app.use("/v1/worker", workerRouter);
+
+app.listen(3000)
+
 
