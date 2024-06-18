@@ -6,6 +6,9 @@ import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
 import { JWT_SECRET } from "..";
 import { authMiddleware } from "../middleware";
 import { createPresignedPost } from "@aws-sdk/s3-presigned-post";
+import { createTaskInput } from "./types";
+
+const DEFAULT_TITLE = "Select the most clickable thumbnail";
 
 const s3Client = new S3Client({
     credentials: {
@@ -17,6 +20,47 @@ const s3Client = new S3Client({
 
 const router = Router();
 const prismaClient = new PrismaClient();
+
+router.post("/task", authMiddleware, async (req, res) => {
+
+    //@ts-ignore
+    const userId = req.userId
+    // validating the inputs from user (zod)
+    const body = req.body;
+
+    const parseData = createTaskInput.safeParse(body);
+
+    if(!parseData.success) {
+        return res.status(411).json({
+            msg: "You've sent the wrong inputs"
+        })
+    }
+
+    //parse the signature here to ensure the person has paid
+
+    let response = await prismaClient.$transaction(async tx => {
+        const response = await tx.task.create({
+            data: {
+                title: parseData.data.title ?? DEFAULT_TITLE,
+                amount: "1",
+                signature: parseData.data.signature,
+                user_id: userId
+            }
+        });
+
+        await tx.option.createMany({
+            data: parseData.data.options.map(x => ({
+                image_url: x.imageUrl,
+                task_id: response.id
+            }))
+        });
+        return response;
+    });
+
+    res.json({
+        id: response.id 
+    })
+})
 
 router.get("/presignedUrl", authMiddleware, async (req, res) => {
     // @ts-ignore
