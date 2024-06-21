@@ -16,10 +16,10 @@ const express_1 = require("express");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const client_1 = require("@prisma/client");
 const client_s3_1 = require("@aws-sdk/client-s3");
-const __1 = require("..");
 const middleware_1 = require("../middleware");
 const s3_presigned_post_1 = require("@aws-sdk/s3-presigned-post");
 const types_1 = require("./types");
+const config_1 = require("../config");
 const DEFAULT_TITLE = "Select the most clickable thumbnail";
 const s3Client = new client_s3_1.S3Client({
     credentials: {
@@ -137,7 +137,7 @@ router.post("/signin", (req, res) => __awaiter(void 0, void 0, void 0, function*
     if (existingUser) {
         const token = jsonwebtoken_1.default.sign({
             userId: existingUser.id
-        }, __1.JWT_SECRET);
+        }, config_1.JWT_SECRET);
         res.json({
             token: token
         });
@@ -150,7 +150,7 @@ router.post("/signin", (req, res) => __awaiter(void 0, void 0, void 0, function*
         });
         const token = jsonwebtoken_1.default.sign({
             userId: user.id
-        }, __1.JWT_SECRET);
+        }, config_1.JWT_SECRET);
         res.json({
             token: token
         });

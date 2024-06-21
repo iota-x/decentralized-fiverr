@@ -26,6 +26,7 @@ model Task {
   user_id   Int 
   signature String
   amount    String
+  done      Boolean @default(false)
   user      User    @relation(fields: [user_id], references: [id])
   submissions   Submission[]
 }
@@ -40,10 +41,8 @@ model Option {
 
 model Worker {
   id              Int           @id @default(autoincrement())
-  email           String        @unique
-  name            String? 
+  address         String        @unique
   submissions     Submission[]
-  balance_id      Int
   pending_amount  Int
   locked_amount   Int
 }

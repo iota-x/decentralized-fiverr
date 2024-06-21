@@ -3,10 +3,10 @@ import jwt from 'jsonwebtoken';
 import { PrismaClient } from "@prisma/client";
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3'
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
-import { JWT_SECRET } from "..";
 import { authMiddleware } from "../middleware";
 import { createPresignedPost } from "@aws-sdk/s3-presigned-post";
 import { createTaskInput } from "./types";
+import { JWT_SECRET } from "../config";
 
 const DEFAULT_TITLE = "Select the most clickable thumbnail";
 
@@ -174,3 +174,5 @@ router.post("/signin", async (req, res) => {
 });
 
 export default router;
+
+
